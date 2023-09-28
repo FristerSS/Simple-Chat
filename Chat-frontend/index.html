@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat</title>
+
+    <style>
+        body
+        {
+            background-color: black;
+
+            display: grid;
+            place-items: center;
+
+            width: 100vw;
+            height: 100vh;
+        }
+
+    </style>
+
+    <link rel="stylesheet" href="./css/global.css">
+</head>
+<body>
+
+    <div id="start_container">
+        <label for="name">Your name</label>
+        <input type="text" id="start_container-name" name="name">
+        <button id="start_container-button">Go!</button>
+    </div>
+
+    <div id="start_block">
+
+    </div>
+
+    <div id="container">
+        <canvas></canvas>
+
+        <section id="chat_container">
+            <article id="chat_container-messages">
+
+            </article>
+            <article id="chat_container-inputs">
+                <input type="text" id="chat_container-message" autocomplete="off" aria-autocomplete="none">
+                <button id="chat_container-send">Send</button>
+            </article>
+        </section>
+    </div>
+
+    <script type="module" src="./dist/main.js"></script>
+</body>
+</html>
