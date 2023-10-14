@@ -17,6 +17,16 @@
             height: 100vh;
         }
 
+        .display-none
+        {
+            display: none;
+        }
+
+        .display-flex
+        {
+            display: flex;
+        }
+
     </style>
 
     <link rel="stylesheet" href="./css/global.css">
@@ -33,10 +43,16 @@
 
     </div>
 
+    <div id="loading" class="display-none">
+        <p>Loading</p>
+        <div id="loading_spinner"></div>
+    </div>
+
     <div id="container">
         <canvas></canvas>
 
         <section id="chat_container">
+            <div id="chat_container-resize">Up</div>
             <article id="chat_container-messages">
 
             </article>

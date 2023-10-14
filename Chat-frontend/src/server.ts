@@ -1,6 +1,7 @@
 import Circle from "./circles"
 import { IServer } from "./interfaces"
 import { TCircle } from "./types"
+import { HideLoadingElement } from "./index"
 
 const colors: string[] = ['red', 'green', 'blue']
 
@@ -31,14 +32,16 @@ class Server implements IServer
               console.log(`Started ${this.app.name}`);
             console.log('socket connection: ' + this.server.id);
 
-            let x = Math.random() * (350 - 0) + 0
-            let y = Math.random() * (350 - 0) + 0
+            let x = Math.random() * (window.innerWidth/2 - 0) + 0
+            let y = Math.random() * (window.innerHeight/2 - 0) + 0
             let color = colors[Math.floor(Math.random() * (colors.length - 0) + 0)]
         
             Circle.Create(this.app, x, y, color, this.server.id, this.app.name)
         
             this.server.emit('newPlayer', {color, position: {x, y}, id: this.server.id, name: this.app.name})
             
+            // Hide loading element when app is loaded
+            HideLoadingElement()
         })
     }
 

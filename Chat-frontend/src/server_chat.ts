@@ -6,11 +6,17 @@ class ServerChat implements IServerChat
     private server: any
     private chatElementContainer: HTMLElement
     private messagesElementContainer: HTMLElement
+    private chatResizeElement: HTMLElement
     private chatInput: HTMLInputElement
     private chatButtonSend: HTMLButtonElement
     private messages: {name: string, text: string}[]
     private maxMessages: number
     private actuallyMessage: string
+
+    private resized: boolean
+
+    private renewMessagesTimer: number
+    private renewMessagesReloaded: boolean
 
     constructor(app: any, server: any)
     {
@@ -18,11 +24,22 @@ class ServerChat implements IServerChat
         this.server = server
         this.chatElementContainer = document.querySelector('#chat_container')
         this.messagesElementContainer = document.querySelector('#chat_container-messages')
+        this.chatResizeElement = document.querySelector('#chat_container-resize')
         this.chatInput = document.querySelector('#chat_container-message')
         this.chatButtonSend = document.querySelector('#chat_container-send')
-        this.maxMessages = 25
+        this.maxMessages = 13
         this.messages = []  
         this.actuallyMessage = ''
+
+        this.resized = false
+
+        this.renewMessagesTimer = 1000
+        this.renewMessagesReloaded = false
+
+        setTimeout(() =>
+        {
+            this.renewMessagesReloaded = true
+        }, this.renewMessagesTimer)
 
         this.chatInput.addEventListener('input', (e: any) =>
         {
@@ -43,6 +60,47 @@ class ServerChat implements IServerChat
             this.actuallyMessage = ''
             this.chatInput.value = ''
 
+        })
+
+        this.messagesElementContainer.addEventListener('scroll', (e: MessageEvent) =>
+        {
+            if(!(e.target instanceof HTMLElement) || !(e.target.children[0] instanceof HTMLElement))
+                return
+
+            if(!this.renewMessagesReloaded)
+                return
+            
+            if(this.maxMessages >= this.messages.length)
+                return
+
+            if(e.target.scrollTop < e.target.children[0].offsetTop)
+            {
+                this.maxMessages +=  this.maxMessages + 4
+                this.ReloadMessagesInChat(true)
+                this.renewMessagesReloaded = false
+
+                setTimeout(() =>
+                {
+                    this.renewMessagesReloaded = true
+                }, this.renewMessagesTimer)
+            }
+            
+        })
+
+        this.chatResizeElement.addEventListener('click', () =>
+        {
+            if(this.resized)
+            {
+                this.chatElementContainer.style.height = '30vh'
+                this.chatResizeElement.textContent = 'Down'
+            }else
+            {
+                this.chatElementContainer.style.height = '20vh'
+                this.chatResizeElement.textContent = 'Up'
+            }
+
+            this.resized = !this.resized
+            
         })
 
         this.GetMessages()
@@ -66,7 +124,7 @@ class ServerChat implements IServerChat
         }
     }
 
-    public ReloadMessagesInChat(): void
+    public ReloadMessagesInChat(increaseMessages: boolean = false): void
     {
         [...this.messagesElementContainer.children].forEach(child =>
             {
@@ -77,6 +135,10 @@ class ServerChat implements IServerChat
 
         this.messages.forEach((message, i) =>
             {
+                if(i < this.messages.length - this.maxMessages)
+                    return
+
+
                 let div = document.createElement('div')
                 div.classList.add('message')
                 
@@ -89,7 +151,15 @@ class ServerChat implements IServerChat
                 div.textContent = `${message.name}: ${message.text}`
 
                 this.messagesElementContainer.appendChild(div)
+                
+                
             })
+
+            console.log(this.messages);
+            
+          if(!increaseMessages)
+            this.messagesElementContainer.scrollTo({behavior: 'smooth', top: this.messagesElementContainer.offsetTop + this.messagesElementContainer.offsetHeight * 3})
+
     }
 
     public GetMessages(): void
